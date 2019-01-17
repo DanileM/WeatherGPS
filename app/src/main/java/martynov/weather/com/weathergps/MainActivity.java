@@ -12,20 +12,27 @@ import android.location.LocationManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TableLayout;
 import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
+
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import martynov.weather.com.weathergps.Common.Common;
+import martynov.weather.com.weathergps.Model.WeatherDay;
+import martynov.weather.com.weathergps.Model.WeatherForecast;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -37,16 +44,28 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private String provider;
 
     private LocationManager locationManager;
-    private String TAG = "WEATHER";
-    private TextView tvTemp;
-    private ImageView tvImage;
-    private WeatherAPI.ApiInterface api;
     private Location location;
 
+    private static final String TAG = "WEATHER";
+
+    private WeatherAPI.ApiInterface api;
+
+    private RecyclerView recyclerView;
+
+    private TextView tvTemp;
+    private ImageView tvImage;
     private TextView city;
     private TextView today;
-    private TextView time;
     private ProgressBar loading;
+    private TextView wind;
+    private TextView cloud;
+    private TextView humidity;
+    private TextView sunrise;
+    private TextView sunset;
+
+    private TableLayout tlTResult;
+    private LinearLayout llToday;
+    private LinearLayout linearLayoutForecast;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,8 +76,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         tvImage = findViewById(R.id.ivImage);
         city = findViewById(R.id.tv_cityName);
         today = findViewById(R.id.tv_todayDate);
-        time = findViewById(R.id.tv_todayTime);
         loading = findViewById(R.id.pb_loading);
+        recyclerView = findViewById(R.id.rv_forecast);
+        wind = findViewById(R.id.tvWindValue);
+        cloud = findViewById(R.id.tvCloudValue);
+        humidity = findViewById(R.id.tvHumidityValue);
+        sunrise = findViewById(R.id.tvSunriseValue);
+        sunset = findViewById(R.id.tvSunsetValue);
+        llToday = findViewById(R.id.llToday);
+        linearLayoutForecast = findViewById(R.id.llForecast);
+        tlTResult = findViewById(R.id.tlWeatherResult);
+
+        recyclerView.setHasFixedSize(true);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
 
         locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -99,17 +129,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             String units = "metric";
             String key = WeatherAPI.KEY;
 
-        Calendar c = Calendar.getInstance();
-
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd.MM.yyyy");
-        SimpleDateFormat timeFormat = new SimpleDateFormat("HH:mm");
-
-        String todayTime = timeFormat.format(c.getTime());
-        String todayDate = dateFormat.format(c.getTime());
-
-        today.setText(todayDate);
-        time.setText(todayTime);
-
             Log.d(TAG, "OK");
 
             // get weather for today
@@ -117,21 +136,35 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             callToday.enqueue(new Callback<WeatherDay>() {
                 @Override
                 public void onResponse(Call<WeatherDay> call, Response<WeatherDay> response) {
-                    Log.e(TAG, "onResponse");
+
                     WeatherDay data = response.body();
-                    //Log.d(TAG,response.toString());
+
                     if (response.isSuccessful()) {
 
+                        today.setText(new StringBuilder(Common.convertUnixToDate(data.getDt())));
                         city.setText(cityName);
-                        tvTemp.setText(data.getTempWithDegree());
-                        Glide.with(MainActivity.this).load(data.getIconUrl()).into(tvImage);
+                        humidity.setText(new StringBuilder(String.valueOf(data.getMain().getHumidity())).append("%"));
+                        sunrise.setText(new StringBuilder(Common.convertUnixToHour(data.getSys().getSunrise())));
+                        sunset.setText(new StringBuilder(Common.convertUnixToHour(data.getSys().getSunset())));
+                        wind.setText(new StringBuilder(String.valueOf(data.getWind().getSpeed())).append(" m/s"));
+                        cloud.setText(new StringBuilder(data.getClouds().getAll()));
 
+                        tvTemp.setText(new StringBuilder(String.valueOf(data.getMain().temp())).append("°C"));
+
+                        Picasso.with(MainActivity.this)
+                                .load(new StringBuilder("http://openweathermap.org/img/w/")
+                                        .append(data.getWeather().get(0).getIcon())
+                                        .append(".png").toString())
+                                .into(tvImage);
+
+                    }else{
+                        Log.e(TAG, "onFailure##");
                     }
                 }
 
                 @Override
                 public void onFailure(Call<WeatherDay> call, Throwable t) {
-                    Log.e(TAG, "onFailure");
+                    Log.e(TAG, "onFailure1");
                     Log.e(TAG, t.toString());
                 }
             });
@@ -140,38 +173,28 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         callForecast.enqueue(new Callback<WeatherForecast>() {
             @Override
             public void onResponse(Call<WeatherForecast> call, Response<WeatherForecast> response) {
-                Log.e(TAG, "onResponse");
                 WeatherForecast data = response.body();
-                //Log.d(TAG,response.toString());
 
                 if (response.isSuccessful()) {
 
-                    for (WeatherDay day : data.getItems()) {
-                        if (day.getDate().get(Calendar.HOUR_OF_DAY) == 15) {
-                            String date = String.format("%d.%d.%d %d:%d",
-                                    day.getDate().get(Calendar.DAY_OF_MONTH),
-                                    day.getDate().get(Calendar.WEEK_OF_MONTH),
-                                    day.getDate().get(Calendar.YEAR),
-                                    day.getDate().get(Calendar.HOUR_OF_DAY),
-                                    day.getDate().get(Calendar.MINUTE)
-                            );
-                            Log.d(TAG, date);
-                            Log.d(TAG, day.getTempInteger());
-                            Log.d(TAG, "---");
+                    WeatherForecastAdapter adapter = new WeatherForecastAdapter(MainActivity.this, data);
+                    recyclerView.setAdapter(adapter);
 
-                        }
-                    }
+                }else{
+                    Log.e(TAG, "onFailure2");
                 }
             }
-
             @Override
             public void onFailure(Call<WeatherForecast> call, Throwable t) {
-                Log.e(TAG, "onFailure");
+                Log.e(TAG, "onFailure3");
                 Log.e(TAG, t.toString());
             }
         });
 
             loading.setVisibility(View.INVISIBLE);
+            tlTResult.setVisibility(View.VISIBLE);
+            llToday.setVisibility(View.VISIBLE);
+            linearLayoutForecast.setVisibility(View.VISIBLE);
 
     }
 

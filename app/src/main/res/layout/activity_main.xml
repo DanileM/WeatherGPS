@@ -1,77 +1,222 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
     android:paddingBottom="16dp"
     android:paddingLeft="16dp"
     android:paddingTop="16dp"
     android:paddingRight="16dp"
-    android:orientation="vertical">
+    android:background="@drawable/background1"
+    >
 
     <LinearLayout
         android:id="@+id/llToday"
+        android:visibility="invisible"
         android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        >
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tv_cityName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="30sp"
             android:text="City"
-            />
+            android:textColor="#fff"
+            android:textSize="50sp" />
 
         <TextView
             android:id="@+id/tv_todayDate"
+            android:textColor="#fff"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="20sp"
             android:text="Today date"
-            />
+            android:textSize="30sp" />
 
-        <TextView
-            android:id="@+id/tv_todayTime"
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_marginTop="20dp"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center"
-            android:textSize="25sp"
-            android:text="Today time"/>
+            android:layout_height="wrap_content">
 
+            <ImageView
+                android:id="@+id/ivImage"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:drawingCacheQuality="high" />
+
+            <TextView
+                 android:id="@+id/tvTemp"
+                 android:textColor="#fff"
+                 android:layout_width="wrap_content"
+                 android:layout_height="wrap_content"
+                 android:text="14C"
+                 android:textStyle="bold"
+                 android:textSize="60sp"/>
+
+        </LinearLayout>
 
     </LinearLayout>
+
+    <TableLayout
+        android:id="@+id/tlWeatherResult"
+        android:visibility="invisible"
+        android:layout_marginTop="20dp"
+        android:layout_width="200dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:stretchColumns="*">
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvWind"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Wind:"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvWindValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="value"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvCloud"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Cloud:"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvCloudValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="value"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvHumidity"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Humidity:"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvHumidityValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="value"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvSunrise"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunrise:"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvSunriseValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="value"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+        </TableRow>
+
+        <TableRow
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:id="@+id/tvSunset"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sunset:"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+            <TextView
+                android:id="@+id/tvSunsetValue"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="value"
+                android:textColor="#fff"
+                android:textSize="20sp" />
+
+        </TableRow>
+
+    </TableLayout>
 
     <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:id="@+id/llForecast"
+        android:visibility="invisible"
         android:orientation="vertical"
-        android:layout_marginTop="20dp">
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        >
 
         <TextView
-            android:id="@+id/tvTemp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textStyle="bold"
+            android:text="FORECAST 5 DAYS"
+            android:layout_gravity="center"
+            android:textSize="30sp"
+            android:textColor="#fff"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/rv_forecast"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
-            android:textSize="80sp"/>
-
-        <ImageView
-            android:id="@+id/ivImage"
-            android:layout_gravity="center"
-            android:layout_width="100dp"
-            android:layout_height="50dp"
-            android:drawingCacheQuality="high" />
-
-        <ProgressBar
-            android:id="@+id/pb_loading"
-            android:visibility="invisible"
-            android:layout_gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
+            ></android.support.v7.widget.RecyclerView>
 
     </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/pb_loading"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:visibility="invisible"
+        android:layout_gravity="center"/>
 
 </LinearLayout>

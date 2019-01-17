@@ -1,5 +1,7 @@
 package martynov.weather.com.weathergps;
 
+import martynov.weather.com.weathergps.Model.WeatherDay;
+import martynov.weather.com.weathergps.Model.WeatherForecast;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
